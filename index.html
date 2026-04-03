@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swiftlo — AI Automation Agency</title>
+  <meta name="description" content="Swiftlo builds AI automations that eliminate repetitive tasks. Turn 4 hours of manual work into 4 seconds." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+
+/* ============================================================
+   TOKENS
+============================================================ */
+:root {
+  --bg:          #080810;
+  --surface:     #0F0F1A;
+  --surface-2:   #171726;
+  --surface-3:   #1E1E30;
+  --border:      #252538;
+  --border-2:    #2E2E48;
+  --accent:      #7C3AFF;
+  --accent-2:    #9D6BFF;
+  --accent-dim:  rgba(124,58,255,0.12);
+  --teal:        #2DFFD0;
+  --teal-dim:    rgba(45,255,208,0.1);
+  --text-1:      #F2F0FF;
+  --text-2:      #9896B8;
+  --text-3:      #5A5878;
+  --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-xl: 28px; --r-pill: 9999px;
+  --shadow-card: 0 1px 0 rgba(255,255,255,0.04) inset, 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-hover: 0 8px 48px rgba(124,58,255,0.18), 0 2px 8px rgba(0,0,0,0.5);
+  --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+  --ease-out:    cubic-bezier(0.16,1,0.3,1);
+  --max-w: 1200px;
+}
+
+/* ============================================================
+   RESET
+============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text-1);font-family:'Inter',sans-serif;font-size:16px;line-height:1.7;overflow-x:hidden}
+::selection{background:rgba(124,58,255,0.3);color:var(--text-1)}
+img,svg{display:block}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+ul,ol{list-style:none}
+h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;letter-spacing:-.03em;line-height:1.15}
+
+/* ============================================================
+   LAYOUT
+============================================================ */
+.container{width:100%;max-width:var(--max-w);margin:0 auto;padding:0 24px}
+.section{padding:100px 0}
+
+/* ============================================================
+   BACKGROUND
+============================================================ */
+.bg-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.65}
+.blob-1{width:700px;height:600px;top:-8%;right:-4%;
+  background:radial-gradient(ellipse at center,rgba(124,58,255,.14) 0%,transparent 70%);
+  animation:drift1 22s ease-in-out infinite alternate}
+.blob-2{width:550px;height:500px;bottom:5%;left:-6%;
+  background:radial-gradient(ellipse at center,rgba(45,255,208,.06) 0%,transparent 70%);
+  animation:drift2 28s ease-in-out infinite alternate}
+.blob-3{width:350px;height:350px;top:45%;left:40%;
+  background:radial-gradient(ellipse at center,rgba(124,58,255,.05) 0%,transparent 70%);
+  animation:drift3 35s ease-in-out infinite alternate}
+
+@keyframes drift1{from{transform:translate(0,0) scale(1)}to{transform:translate(-45px,35px) scale(1.08)}}
+@keyframes drift2{from{transform:translate(0,0) scale(1)}to{transform:translate(35px,-25px) scale(1.06)}}
+@keyframes drift3{from{transform:translate(0,0) scale(1)}to{transform:translate(-20px,20px) scale(1.12)}}
+
+/* Dot grid */
+.dot-grid{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(124,58,255,.13) 1px,transparent 1px);
+  background-size:36px 36px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,rgba(0,0,0,.6) 0%,transparent 100%);
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,rgba(0,0,0,.6) 0%,transparent 100%)}
+
+/* Grain */
+.grain{position:fixed;inset:0;pointer-events:none;z-index:9999}
+
+/* ============================================================
+   TYPOGRAPHY UTILITIES
+============================================================ */
+.eyebrow{font-family:'Inter',sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-2)}
+.section-header{text-align:center;margin-bottom:72px}
+.section-header h2{font-size:clamp(1.75rem,3.5vw,2.75rem);font-weight:700;margin-top:12px}
+.section-header p{font-size:1.0625rem;color:var(--text-2);max-width:580px;margin:16px auto 0;line-height:1.8}
+
+/* ============================================================
+   BUTTONS
+============================================================ */
+.btn{display:inline-flex;align-items:center;gap:8px;height:52px;padding:0 28px;border-radius:var(--r-pill);font-family:'Space Grotesk',sans-serif;font-size:.9375rem;font-weight:600;white-space:nowrap;transition:transform .22s var(--ease-spring),box-shadow .22s ease,background-color .18s ease,border-color .18s ease}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-2);box-shadow:0 0 32px rgba(124,58,255,.35),0 4px 16px rgba(0,0,0,.4)}
+
+.btn-ghost{background:transparent;color:var(--text-1);border:1px solid var(--border-2)}
+.btn-ghost:hover{border-color:var(--accent-2);background:var(--accent-dim)}
+
+.btn-sm{height:42px;padding:0 20px;font-size:.875rem}
+
+.btn-icon{width:18px;height:18px;transition:transform .2s var(--ease-spring)}
+.btn:hover .btn-icon{transform:translateX(3px)}
+
+/* ============================================================
+   NAV
+============================================================ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:20px 0;
+  transition:background .3s ease,border-color .3s ease,padding .3s ease;
+  border-bottom:1px solid transparent}
+.nav.scrolled{background:rgba(8,8,16,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom-color:var(--border);padding:14px 0}
+
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:24px}
+
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.logo-text{font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700;letter-spacing:-.04em}
+
+.nav-links{display:flex;align-items:center;gap:40px}
+.nav-links a{font-size:.9375rem;font-weight:500;color:var(--text-2);transition:color .18s ease}
+.nav-links a:hover{color:var(--text-1)}
+
+.nav-right{display:flex;align-items:center;gap:14px}
+
+/* Hamburger */
+.ham{display:none;flex-direction:column;gap:5px;padding:8px;background:none;border:none;cursor:pointer}
+.ham span{display:block;width:22px;height:2px;background:var(--text-1);border-radius:2px;transition:transform .3s ease,opacity .3s ease}
+.ham.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.ham.open span:nth-child(2){opacity:0}
+.ham.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+.mobile-nav{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(8,8,16,.97);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:20px 24px 28px}
+.mobile-nav.open{display:block}
+.mobile-nav a{display:block;padding:14px 0;font-size:1.0625rem;font-weight:500;color:var(--text-2);border-bottom:1px solid var(--border);transition:color .18s ease}
+.mobile-nav a:last-of-type{border:none}
+.mobile-nav a:hover{color:var(--text-1)}
+.mobile-nav .btn{margin-top:20px;width:100%;justify-content:center}
+
+/* ============================================================
+   HERO
+============================================================ */
+.hero{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;padding:130px 0 80px}
+
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+
+.hero-text{display:flex;flex-direction:column;gap:24px}
+
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:rgba(124,58,255,.1);border:1px solid rgba(124,58,255,.28);border-radius:var(--r-pill);font-size:.8125rem;font-weight:500;color:var(--accent-2);width:fit-content}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+.hero h1{font-size:clamp(2.5rem,5vw,4.75rem);font-weight:700}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--accent-2),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.hero-sub{font-size:clamp(1rem,1.8vw,1.125rem);color:var(--text-2);max-width:520px;line-height:1.8}
+
+.hero-ctas{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+
+.hero-proof{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding-top:8px}
+.proof-pill{display:flex;align-items:center;gap:7px;font-size:.8125rem;color:var(--text-3)}
+.proof-pill::before{content:'';display:block;width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.proof-sep{width:1px;height:14px;background:var(--border-2)}
+
+/* ── Hero visual / dashboard mockup ── */
+.hero-visual{position:relative;display:flex;justify-content:center;align-items:center}
+
+.dashboard-card{
+  position:relative;z-index:2;
+  background:var(--surface);
+  border:1px solid var(--border-2);
+  border-radius:var(--r-xl);
+  padding:0;
+  width:100%;
+  max-width:420px;
+  box-shadow:var(--shadow-card),0 0 80px rgba(124,58,255,.1);
+  overflow:hidden;
+}
+
+.dash-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;
+  border-bottom:1px solid var(--border);
+  background:var(--surface-2);
+}
+.dash-live{display:flex;align-items:center;gap:7px;font-size:.8125rem;font-weight:500;color:var(--text-2)}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 6px var(--teal);animation:pulse 1.6s ease-in-out infinite}
+.dash-count{font-size:.8125rem;font-weight:600;color:var(--teal);background:rgba(45,255,208,.08);padding:4px 10px;border-radius:var(--r-pill);border:1px solid rgba(45,255,208,.2)}
+
+/* Automation list */
+.automation-list{padding:8px 0}
+.auto-item{
+  display:flex;align-items:center;gap:14px;
+  padding:13px 20px;
+  border-bottom:1px solid rgba(37,37,56,.5);
+  transition:background .2s ease;
+}
+.auto-item:last-child{border-bottom:none}
+.auto-item:hover{background:rgba(124,58,255,.04)}
+
+.auto-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.auto-icon.green{background:rgba(45,255,208,.1);border:1px solid rgba(45,255,208,.18)}
+.auto-icon.purple{background:rgba(124,58,255,.12);border:1px solid rgba(124,58,255,.22)}
+.auto-icon.blue{background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.2)}
+.auto-icon.orange{background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.2)}
+.auto-icon svg{width:16px;height:16px}
+
+.auto-text{flex:1;min-width:0}
+.auto-name{font-size:.875rem;font-weight:600;color:var(--text-1);line-height:1.3}
+.auto-desc{font-size:.75rem;color:var(--text-3);margin-top:2px}
+
+.auto-status{
+  font-size:.6875rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 9px;border-radius:var(--r-pill);
+  background:rgba(45,255,208,.1);color:var(--teal);border:1px solid rgba(45,255,208,.2);
+  flex-shrink:0;
+}
+
+/* Footer bar inside card */
+.dash-footer-bar{
+  border-top:1px solid var(--border);
+  background:var(--surface-2);
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.dfb-stat{display:flex;flex-direction:column;gap:2px;text-align:center}
+.dfb-num{font-family:'Space Grotesk',sans-serif;font-size:1.125rem;font-weight:700;color:var(--teal)}
+.dfb-lbl{font-size:.6875rem;color:var(--text-3)}
+
+/* Floating chips */
+.float-chip{
+  position:absolute;
+  background:var(--surface-2);
+  border:1px solid var(--border-2);
+  border-radius:var(--r-lg);
+  padding:12px 16px;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  z-index:3;
+  white-space:nowrap;
+  animation:floatY 4s ease-in-out infinite alternate;
+}
+.float-chip-1{top:-24px;right:-28px;animation-delay:0s}
+.float-chip-2{bottom:-20px;left:-20px;animation-delay:2s}
+
+@keyframes floatY{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+
+.chip-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.chip-icon.green{background:rgba(45,255,208,.12)}
+.chip-icon.purple{background:rgba(124,58,255,.14)}
+.chip-icon svg{width:16px;height:16px}
+.chip-text{display:flex;flex-direction:column;gap:1px}
+.chip-label{font-size:.8125rem;font-weight:600;color:var(--text-1);font-family:'Space Grotesk',sans-serif}
+.chip-sub{font-size:.6875rem;color:var(--text-3)}
+
+/* Ambient glow behind dashboard */
+.dash-glow{
+  position:absolute;inset:-40px;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(124,58,255,.12) 0%,transparent 70%);
+}
+
+/* ============================================================
+   MARQUEE (integration strip)
+============================================================ */
+.marquee-section{
+  position:relative;z-index:1;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:20px 0;
+  background:var(--surface);
+  overflow:hidden;
+}
+.marquee-label{
+  position:absolute;left:24px;top:50%;transform:translateY(-50%);
+  font-size:.75rem;color:var(--text-3);font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  z-index:2;background:var(--surface);padding-right:16px;
+}
+.marquee-fade-left{position:absolute;left:0;top:0;bottom:0;width:120px;background:linear-gradient(90deg,var(--surface),transparent);z-index:2;pointer-events:none}
+.marquee-fade-right{position:absolute;right:0;top:0;bottom:0;width:120px;background:linear-gradient(-90deg,var(--surface),transparent);z-index:2;pointer-events:none}
+.marquee-track{display:flex;gap:0;animation:marquee 28s linear infinite;width:max-content}
+.marquee-track:hover{animation-play-state:paused}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.marquee-item{
+  display:flex;align-items:center;gap:10px;
+  padding:0 36px;
+  border-right:1px solid var(--border);
+  font-size:.9375rem;font-weight:500;color:var(--text-3);
+  transition:color .2s ease;
+}
+.marquee-item:hover{color:var(--text-2)}
+.marquee-dot{width:8px;height:8px;border-radius:50%;background:var(--border-2);flex-shrink:0}
+
+/* ============================================================
+   PROBLEM
+============================================================ */
+.problem{position:relative;z-index:1}
+.problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+
+.prob-card{
+  position:relative;overflow:hidden;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;
+  box-shadow:var(--shadow-card);
+  transition:transform .25s var(--ease-spring),box-shadow .25s ease,border-color .25s ease;
+}
+.prob-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover);border-color:rgba(124,58,255,.3)}
+.prob-card::before{content:'';position:absolute;left:0;top:20px;bottom:20px;width:3px;background:linear-gradient(180deg,var(--accent),var(--teal));border-radius:0 3px 3px 0}
+.prob-card::after{content:'';position:absolute;top:0;right:0;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,255,.06) 0%,transparent 70%);pointer-events:none}
+
+.prob-num{font-family:'Space Grotesk',sans-serif;font-size:2.5rem;font-weight:700;color:var(--accent);line-height:1;margin-bottom:6px;opacity:.9}
+.prob-unit{font-size:.9375rem;color:var(--accent-2);font-weight:600;margin-bottom:16px}
+.prob-card h3{font-size:1.0625rem;font-weight:600;margin-bottom:10px}
+.prob-card p{font-size:.9375rem;color:var(--text-2);line-height:1.7}
+
+/* ============================================================
+   SOLUTION
+============================================================ */
+.solution{position:relative;z-index:1;background:linear-gradient(180deg,transparent 0%,rgba(15,15,26,.5) 20%,rgba(15,15,26,.5) 80%,transparent 100%)}
+.solution-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.solution-text h2{font-size:clamp(1.75rem,3vw,2.5rem);font-weight:700;margin:12px 0 20px}
+.solution-text p{font-size:1.0625rem;color:var(--text-2);line-height:1.85;margin-bottom:28px}
+
+/* Flow vis */
+.flow-vis{display:flex;flex-direction:column;gap:12px}
+.flow-row{display:flex;align-items:center;gap:10px}
+.flow-node{
+  flex:1;background:var(--surface-2);border:1px solid var(--border-2);border-radius:var(--r-md);padding:14px 18px;
+  transition:border-color .2s ease;
+}
+.flow-node:hover{border-color:rgba(124,58,255,.3)}
+.flow-node.hi{background:linear-gradient(135deg,rgba(124,58,255,.14),rgba(45,255,208,.06));border-color:rgba(124,58,255,.35)}
+.flow-node-tag{font-size:.6875rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:4px}
+.flow-node-name{font-family:'Space Grotesk',sans-serif;font-size:.9375rem;font-weight:600;color:var(--text-1)}
+.flow-node.hi .flow-node-name{color:var(--accent-2)}
+.flow-arrow{flex-shrink:0;color:var(--accent);opacity:.7}
+.flow-results{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.flow-result{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 12px;text-align:center;
+  transition:border-color .2s ease;
+}
+.flow-result:hover{border-color:rgba(45,255,208,.25)}
+.fr-emoji{font-size:1.25rem;margin-bottom:6px}
+.fr-text{font-size:.8125rem;color:var(--text-2);font-weight:500}
+
+/* ============================================================
+   SERVICES
+============================================================ */
+.services{position:relative;z-index:1}
+.services-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+
+.svc-card{
+  position:relative;overflow:hidden;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:32px;
+  box-shadow:var(--shadow-card);
+  transition:transform .25s var(--ease-spring),box-shadow .25s ease,border-color .25s ease;
+}
+.svc-card::after{
+  content:'';position:absolute;inset:0;border-radius:var(--r-lg);
+  background:linear-gradient(135deg,rgba(124,58,255,.07) 0%,transparent 60%);
+  opacity:0;transition:opacity .3s ease;pointer-events:none;
+}
+.svc-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-hover);border-color:rgba(124,58,255,.28)}
+.svc-card:hover::after{opacity:1}
+
+.svc-icon{
+  width:50px;height:50px;border-radius:var(--r-md);
+  background:rgba(124,58,255,.1);border:1px solid rgba(124,58,255,.18);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:22px;
+  transition:background .2s ease,border-color .2s ease,transform .2s var(--ease-spring);
+}
+.svc-card:hover .svc-icon{background:rgba(124,58,255,.18);border-color:rgba(124,58,255,.4);transform:scale(1.08)}
+.svc-icon svg{width:24px;height:24px;color:var(--accent-2)}
+
+.svc-card h3{font-size:1.125rem;font-weight:600;margin-bottom:10px}
+.svc-card p{font-size:.9375rem;color:var(--text-2);line-height:1.75}
+
+.svc-tag{
+  display:inline-flex;align-items:center;margin-top:18px;
+  font-size:.75rem;font-weight:600;color:var(--accent-2);gap:5px;
+  letter-spacing:.04em;
+}
+.svc-tag svg{width:13px;height:13px}
+
+/* ============================================================
+   PROCESS
+============================================================ */
+.process{position:relative;z-index:1}
+.process-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;position:relative}
+.process-line{
+  position:absolute;top:38px;
+  left:calc(16.666% + 20px);right:calc(16.666% + 20px);
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),var(--accent),transparent);
+  opacity:.25;
+}
+.process-line::after{
+  content:'';position:absolute;top:-2px;height:5px;width:60px;
+  background:linear-gradient(90deg,transparent,rgba(124,58,255,.5),transparent);
+  animation:lineTravelRight 3s ease-in-out infinite;
+}
+@keyframes lineTravelRight{0%{left:0;opacity:0}20%{opacity:1}80%{opacity:1}100%{left:calc(100% - 60px);opacity:0}}
+
+.proc-card{
+  position:relative;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:32px 28px;
+  box-shadow:var(--shadow-card);
+  transition:transform .25s var(--ease-spring),box-shadow .25s ease;
+}
+.proc-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover)}
+
+.step-big{position:absolute;top:12px;right:16px;font-family:'Space Grotesk',sans-serif;font-size:4.5rem;font-weight:700;color:var(--accent);opacity:.07;line-height:1;user-select:none;pointer-events:none}
+.step-badge{width:34px;height:34px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:.8125rem;font-weight:700;color:#fff;margin-bottom:20px;position:relative;z-index:1}
+.proc-card h3{font-size:1.125rem;font-weight:600;margin-bottom:10px}
+.proc-card p{font-size:.9375rem;color:var(--text-2);line-height:1.75}
+
+/* ============================================================
+   STATS
+============================================================ */
+.stats{
+  position:relative;z-index:1;
+  background:var(--surface);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:72px 0;
+}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.stat-item{text-align:center;padding:20px}
+
+.stat-ring-wrap{position:relative;width:96px;height:96px;margin:0 auto 16px}
+.stat-ring-svg{width:96px;height:96px;transform:rotate(-90deg)}
+.stat-ring-bg{fill:none;stroke:var(--border);stroke-width:5}
+.stat-ring-fg{fill:none;stroke-width:5;stroke-linecap:round;stroke-dasharray:251;stroke-dashoffset:251;transition:stroke-dashoffset 1.6s var(--ease-out)}
+.stat-ring-fg.teal{stroke:var(--teal)}
+.stat-ring-fg.purple{stroke:var(--accent-2)}
+.stat-ring-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+
+.stat-num{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;color:var(--teal);line-height:1}
+.stat-num.purple{color:var(--accent-2)}
+.stat-lbl{font-size:.875rem;color:var(--text-2);line-height:1.5}
+
+/* ============================================================
+   TESTIMONIALS
+============================================================ */
+.testimonials{position:relative;z-index:1}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+
+.testi-card{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;
+  box-shadow:0 4px 32px rgba(124,58,255,.06);
+  transition:transform .25s var(--ease-spring),box-shadow .25s ease;
+}
+.testi-card:hover{transform:translateY(-4px);box-shadow:0 8px 48px rgba(124,58,255,.13)}
+
+.stars{display:flex;gap:3px;margin-bottom:20px}
+.star{width:15px;height:15px;color:#FFB224}
+
+.testi-quote{font-size:.9375rem;font-style:italic;color:var(--text-2);line-height:1.8;margin-bottom:24px}
+.testi-author{display:flex;align-items:center;gap:14px}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent-dim) 0%,var(--accent) 100%);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:.875rem;font-weight:700;color:#fff;flex-shrink:0;border:2px solid rgba(124,58,255,.3)}
+.author-name{font-family:'Space Grotesk',sans-serif;font-size:.9375rem;font-weight:600}
+.author-role{font-size:.8125rem;color:var(--text-3);margin-top:2px}
+
+/* ============================================================
+   CTA
+============================================================ */
+.cta-section{position:relative;z-index:1;overflow:hidden}
+.cta-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(124,58,255,.11) 0%,transparent 70%)}
+
+.cta-box{
+  position:relative;background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-xl);padding:80px 64px;
+  overflow:hidden;text-align:center;
+}
+.cta-box::before{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:220px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.cta-box::after{content:'';position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);width:400px;height:200px;border-radius:50%;background:radial-gradient(ellipse,rgba(124,58,255,.08) 0%,transparent 70%);pointer-events:none}
+
+.cta-box h2{font-size:clamp(1.75rem,3.5vw,2.75rem);font-weight:700;margin:12px 0 16px}
+.cta-box p{font-size:1.0625rem;color:var(--text-2);max-width:520px;margin:0 auto 40px}
+
+.cta-form{display:flex;gap:10px;max-width:480px;margin:0 auto;position:relative;z-index:1}
+.cta-input{
+  flex:1;height:52px;padding:0 20px;
+  background:var(--bg);border:1px solid var(--border-2);border-radius:var(--r-pill);
+  color:var(--text-1);font-family:'Inter',sans-serif;font-size:.9375rem;outline:none;
+  transition:border-color .2s ease,box-shadow .2s ease;
+}
+.cta-input::placeholder{color:var(--text-3)}
+.cta-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,255,.16)}
+
+.cta-success{display:none;align-items:center;justify-content:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-size:1.125rem;font-weight:600;color:var(--teal);position:relative;z-index:1}
+.cta-success svg{width:22px;height:22px}
+
+/* ============================================================
+   FOOTER
+============================================================ */
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:64px 0 48px}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:64px}
+
+.footer-brand .logo{margin-bottom:14px}
+.footer-tag{font-size:.9375rem;color:var(--text-3);margin-bottom:20px}
+.footer-copy{font-size:.8125rem;color:var(--text-3)}
+
+.footer-col h4{font-size:.8125rem;font-weight:600;color:var(--text-2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px}
+.footer-col ul{display:flex;flex-direction:column;gap:14px}
+.footer-col ul li a{font-size:.9375rem;color:var(--text-3);transition:color .18s ease}
+.footer-col ul li a:hover{color:var(--text-1)}
+
+/* ============================================================
+   FADE-IN ANIMATIONS
+============================================================ */
+.fade-up{opacity:0;transform:translateY(28px);filter:blur(3px);transition:opacity .7s var(--ease-out),transform .7s var(--ease-out),filter .7s var(--ease-out)}
+.fade-up.visible{opacity:1;transform:translateY(0);filter:blur(0)}
+.stagger .fade-up:nth-child(2){transition-delay:.1s}
+.stagger .fade-up:nth-child(3){transition-delay:.2s}
+.stagger .fade-up:nth-child(4){transition-delay:.3s}
+
+/* ============================================================
+   EXTRA ANIMATIONS
+============================================================ */
+
+/* Scroll progress */
+.scroll-progress{position:fixed;top:0;left:0;height:2px;z-index:9999;background:linear-gradient(90deg,var(--accent),var(--teal));width:0%;pointer-events:none;transition:width .08s linear}
+
+/* Floating particles */
+@keyframes particleRise{0%{transform:translateY(0) translateX(0);opacity:0}8%{opacity:var(--op,.3)}92%{opacity:var(--op,.3)}100%{transform:translateY(-100vh) translateX(var(--drift,20px));opacity:0}}
+.particle{position:fixed;pointer-events:none;z-index:0;border-radius:50%;animation:particleRise var(--dur,10s) linear infinite}
+
+/* Dashboard card scan line */
+@keyframes cardScan{0%{top:0;opacity:0}4%{opacity:1}96%{opacity:.5}100%{top:100%;opacity:0}}
+.dashboard-card{overflow:hidden}
+.dashboard-card::after{content:'';position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(45,255,208,.55),rgba(124,58,255,.4),transparent);top:0;z-index:10;pointer-events:none;animation:cardScan 5s ease-in-out infinite}
+
+/* Step badge ripple */
+@keyframes badgeRipple{0%{inset:0;opacity:.8}100%{inset:-14px;opacity:0}}
+.step-badge{overflow:visible}
+.step-badge::after{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid var(--accent);opacity:0;animation:badgeRipple 2.5s ease-out infinite}
+.proc-card:nth-child(3) .step-badge::after{animation-delay:.85s}
+.proc-card:nth-child(4) .step-badge::after{animation-delay:1.7s}
+
+/* Auto-item entrance stagger */
+@keyframes autoSlideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:translateX(0)}}
+.auto-item:nth-child(1){animation:autoSlideIn .45s var(--ease-out) .25s both}
+.auto-item:nth-child(2){animation:autoSlideIn .45s var(--ease-out) .45s both}
+.auto-item:nth-child(3){animation:autoSlideIn .45s var(--ease-out) .65s both}
+.auto-item:nth-child(4){animation:autoSlideIn .45s var(--ease-out) .85s both}
+
+/* Hero CTA glow pulse */
+.hero-ctas .btn-primary{position:relative;isolation:isolate}
+.hero-ctas .btn-primary::before{content:'';position:absolute;inset:-4px;border-radius:inherit;background:linear-gradient(135deg,var(--accent),var(--teal));opacity:0;filter:blur(14px);z-index:-1;animation:btnGlow 3s ease-in-out infinite}
+@keyframes btnGlow{0%,100%{opacity:0}50%{opacity:.45}}
+.hero-ctas .btn-primary:hover::before{opacity:.6;animation:none}
+
+/* Flow node hi pulse */
+@keyframes flowHiPulse{0%,100%{border-color:rgba(124,58,255,.35);box-shadow:none}50%{border-color:rgba(124,58,255,.7);box-shadow:0 0 20px rgba(124,58,255,.2)}}
+.flow-node.hi{animation:flowHiPulse 2.5s ease-in-out infinite}
+
+/* Chip glow on hover */
+.float-chip:hover{box-shadow:0 8px 40px rgba(124,58,255,.28),0 2px 8px rgba(0,0,0,.5)}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media(max-width:1023px){
+  .hero-inner{grid-template-columns:1fr;gap:48px}
+  .hero-visual{justify-content:center}
+  .float-chip-1{top:-16px;right:-10px}
+  .float-chip-2{bottom:-14px;left:-10px}
+  .problem-grid{grid-template-columns:1fr}
+  .services-grid{grid-template-columns:1fr}
+  .solution-inner{grid-template-columns:1fr;gap:48px}
+  .process-steps{grid-template-columns:1fr}
+  .process-line{display:none}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .testi-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr;gap:40px}
+}
+@media(max-width:767px){
+  .nav-links,.nav-right .btn-primary{display:none}
+  .ham{display:flex}
+  .hero{padding-top:100px}
+  .hero-ctas{flex-direction:column;width:100%}
+  .hero-ctas .btn{width:100%;justify-content:center}
+  .float-chip{display:none}
+  .cta-form{flex-direction:column}
+  .cta-box{padding:48px 24px}
+  .section{padding:72px 0}
+}
+@media(max-width:479px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+
+  </style>
+</head>
+<body>
+
+<!-- Scroll progress bar -->
+<div class="scroll-progress" id="scrollBar" aria-hidden="true"></div>
+
+<!-- bg layers -->
+<div class="bg-canvas" aria-hidden="true">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+<div class="dot-grid" aria-hidden="true"></div>
+<svg class="grain" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <filter id="g"><feTurbulence type="fractalNoise" baseFrequency=".65" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+  <rect width="100%" height="100%" filter="url(#g)" opacity=".032"/>
+</svg>
+
+<!-- ============================================================
+     NAV
+============================================================ -->
+<nav class="nav" id="nav">
+  <div class="container">
+    <div class="nav-inner">
+
+      <a href="#" class="logo" aria-label="Swiftlo">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M16 3A13 13 0 1 1 28.8 21.5" stroke="#7C3AFF" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M19 7L13 17h4L13 25l8-12h-4z" fill="#F2F0FF"/>
+        </svg>
+        <span class="logo-text">Swiftlo</span>
+      </a>
+
+      <ul class="nav-links" role="list">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#results">Results</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+      </ul>
+
+      <div class="nav-right">
+        <a href="#cta" class="btn btn-primary btn-sm">Book a Free Call</a>
+        <button class="ham" id="ham" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile">
+      <a href="#services">Services</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#results">Results</a>
+      <a href="#testimonials">Testimonials</a>
+      <a href="#cta" class="btn btn-primary">Book a Free Call</a>
+    </nav>
+  </div>
+</nav>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section class="hero" id="hero">
+  <div class="container">
+    <div class="hero-inner">
+
+      <!-- Text -->
+      <div class="hero-text">
+        <div class="hero-badge fade-up">
+          <span class="badge-dot"></span>
+          AI Automation Agency
+        </div>
+
+        <h1 class="fade-up">
+          Repetitive work<br/>done in <em>seconds,</em><br/>not hours.
+        </h1>
+
+        <p class="hero-sub fade-up">
+          Swiftlo builds custom automations that handle the tedious admin — so you and your team spend less time on repetitive tasks and more time on the work that actually grows your business.
+        </p>
+
+        <div class="hero-ctas fade-up">
+          <a href="#how-it-works" class="btn btn-primary">
+            See How It Works
+            <svg class="btn-icon" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 9h12M11 5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#cta" class="btn btn-ghost">Book a Free Call</a>
+        </div>
+
+        <div class="hero-proof fade-up">
+          <span class="proof-pill">50+ businesses</span>
+          <span class="proof-sep"></span>
+          <span class="proof-pill">10,000+ hours saved</span>
+          <span class="proof-sep"></span>
+          <span class="proof-pill">3-day setup</span>
+        </div>
+      </div>
+
+      <!-- Visual / Dashboard -->
+      <div class="hero-visual fade-up">
+        <div class="dash-glow"></div>
+
+        <!-- Floating chip top-right -->
+        <div class="float-chip float-chip-1">
+          <div class="chip-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="chip-text">
+            <span class="chip-label">+40% pipeline velocity</span>
+            <span class="chip-sub">since automation launch</span>
+          </div>
+        </div>
+
+        <!-- Automation overview card -->
+        <div class="dashboard-card">
+          <div class="dash-header">
+            <span class="dash-live">
+              <span class="live-dot"></span>
+              Automations active
+            </span>
+            <span class="dash-count">4 running</span>
+          </div>
+
+          <div class="automation-list">
+            <div class="auto-item">
+              <div class="auto-icon green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#2DFFD0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+              </div>
+              <div class="auto-text">
+                <div class="auto-name">Data Sync</div>
+                <div class="auto-desc">All tools stay in sync, automatically</div>
+              </div>
+              <div class="auto-status">On</div>
+            </div>
+
+            <div class="auto-item">
+              <div class="auto-icon purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#9D6BFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div class="auto-text">
+                <div class="auto-name">Email Sequences</div>
+                <div class="auto-desc">Follow-ups sent at the perfect moment</div>
+              </div>
+              <div class="auto-status">On</div>
+            </div>
+
+            <div class="auto-item">
+              <div class="auto-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </div>
+              <div class="auto-text">
+                <div class="auto-name">Report Generation</div>
+                <div class="auto-desc">Weekly reports built and delivered</div>
+              </div>
+              <div class="auto-status">On</div>
+            </div>
+
+            <div class="auto-item">
+              <div class="auto-icon orange">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#FB923C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+              </div>
+              <div class="auto-text">
+                <div class="auto-name">Lead &amp; CRM Updates</div>
+                <div class="auto-desc">Leads captured, scored, and routed</div>
+              </div>
+              <div class="auto-status">On</div>
+            </div>
+          </div>
+
+          <div class="dash-footer-bar">
+            <div class="dfb-stat">
+              <div class="dfb-num">18 hrs</div>
+              <div class="dfb-lbl">saved / week / person</div>
+            </div>
+            <div class="dfb-stat">
+              <div class="dfb-num">0</div>
+              <div class="dfb-lbl">errors</div>
+            </div>
+            <div class="dfb-stat">
+              <div class="dfb-num">24/7</div>
+              <div class="dfb-lbl">always running</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating chip bottom-left -->
+        <div class="float-chip float-chip-2">
+          <div class="chip-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <div class="chip-text">
+            <span class="chip-label">80 hrs recovered</span>
+            <span class="chip-sub">this month</span>
+          </div>
+        </div>
+
+      </div><!-- /hero-visual -->
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     MARQUEE
+============================================================ -->
+<div class="marquee-section" aria-label="Integrations">
+  <div class="marquee-fade-left"></div>
+  <div class="marquee-fade-right"></div>
+  <div class="marquee-track" id="marqueeTrack">
+    <!-- Built by JS so duplication is clean -->
+  </div>
+</div>
+
+<!-- ============================================================
+     PROBLEM
+============================================================ -->
+<section class="problem section" id="problem">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="eyebrow">The Problem</span>
+      <h2>You — and your best people — deserve better<br/>than copy-paste and manual reports.</h2>
+      <p>Copying data between tools. Chasing approvals. Building the same report every Friday. Whether you're a solo founder or managing a team, the busywork just keeps getting in the way of the work that actually matters.</p>
+    </div>
+
+    <div class="problem-grid stagger">
+      <div class="prob-card fade-up">
+        <div class="prob-num">4.5</div>
+        <div class="prob-unit">hours / person / week</div>
+        <h3>Time Your Team Can't Get Back</h3>
+        <p>The average team member spends 4.5 hours every single week on tasks that could run automatically. That's a full month of productive work lost per person, per year.</p>
+      </div>
+      <div class="prob-card fade-up">
+        <div class="prob-num">6+</div>
+        <div class="prob-unit">disconnected tools</div>
+        <h3>Systems That Don't Talk</h3>
+        <p>CRM. Inbox. Spreadsheets. Invoicing. None of them share data automatically — so someone manually bridges the gaps every time. That's you.</p>
+      </div>
+      <div class="prob-card fade-up">
+        <div class="prob-num">23%</div>
+        <div class="prob-unit">of manual tasks have errors</div>
+        <h3>Mistakes That Compound</h3>
+        <p>Human error in repetitive work is inevitable. Missed follow-ups, wrong data, skipped steps — small mistakes that quietly cost you deals and credibility.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SOLUTION
+============================================================ -->
+<section class="solution section" id="solution">
+  <div class="container">
+    <div class="solution-inner">
+      <div class="solution-text fade-up">
+        <span class="eyebrow">The Solution</span>
+        <h2>Give yourself — and your team — back the time to do work that actually matters.</h2>
+        <p>Swiftlo maps every repetitive task in your workflow, builds automations that handle them end-to-end, and maintains them as your business grows. You get hours back every week — whether you're flying solo or running a growing team.</p>
+        <a href="#cta" class="btn btn-primary">
+          Get Started Free
+          <svg class="btn-icon" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 9h12M11 5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <div class="flow-vis fade-up">
+        <div class="flow-row">
+          <div class="flow-node">
+            <div class="flow-node-tag">Input</div>
+            <div class="flow-node-name">Your Tools &amp; Data</div>
+          </div>
+          <svg class="flow-arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M15 8l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="flow-node hi">
+            <div class="flow-node-tag">Powered by</div>
+            <div class="flow-node-name">Swiftlo AI</div>
+          </div>
+          <svg class="flow-arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M15 8l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="flow-node">
+            <div class="flow-node-tag">Output</div>
+            <div class="flow-node-name">Zero Manual Work</div>
+          </div>
+        </div>
+        <div class="flow-results">
+          <div class="flow-result"><div class="fr-emoji">⚡</div><div class="fr-text">Instant triggers</div></div>
+          <div class="flow-result"><div class="fr-emoji">🔄</div><div class="fr-text">Always-on sync</div></div>
+          <div class="flow-result"><div class="fr-emoji">📊</div><div class="fr-text">Live reports</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SERVICES
+============================================================ -->
+<section class="services section" id="services">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="eyebrow">What We Build</span>
+      <h2>Four ways we free you<br/>to focus on what grows your business.</h2>
+    </div>
+
+    <div class="services-grid stagger">
+      <div class="svc-card fade-up">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </div>
+        <h3>Data Sync &amp; Routing</h3>
+        <p>Connect your apps so data flows automatically — no more manual exports, imports, or copy-paste between platforms. Every system stays in sync, in real time.</p>
+        <span class="svc-tag">
+          <svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 9h12M11 5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Learn more
+        </span>
+      </div>
+
+      <div class="svc-card fade-up">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/><line x1="17" y1="14" x2="21" y2="10"/></svg>
+        </div>
+        <h3>Smart Email Sequences</h3>
+        <p>Trigger personalized follow-ups, onboarding flows, and notifications based on real-time conditions. Sent at exactly the right moment, every time — automatically.</p>
+        <span class="svc-tag">
+          <svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 9h12M11 5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Learn more
+        </span>
+      </div>
+
+      <div class="svc-card fade-up">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <h3>Document &amp; Report Generation</h3>
+        <p>Proposals, invoices, weekly reports — generated automatically from live data. Zero manual effort, always accurate, always on time.</p>
+        <span class="svc-tag">
+          <svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 9h12M11 5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Learn more
+        </span>
+      </div>
+
+      <div class="svc-card fade-up">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><polyline points="20 6 22 8 20 10"/></svg>
+        </div>
+        <h3>Lead &amp; CRM Automation</h3>
+        <p>Capture leads, qualify, assign, and follow up entirely on autopilot — from first touch to closed deal. Your pipeline never stalls again.</p>
+        <span class="svc-tag">
+          <svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 9h12M11 5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Learn more
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PROCESS
+============================================================ -->
+<section class="process section" id="how-it-works">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="eyebrow">The Process</span>
+      <h2>From first call to full automation<br/>in three steps.</h2>
+    </div>
+
+    <div class="process-steps stagger">
+      <div class="process-line" aria-hidden="true"></div>
+
+      <div class="proc-card fade-up">
+        <span class="step-big" aria-hidden="true">01</span>
+        <div class="step-badge" aria-label="Step 1">1</div>
+        <h3>Discovery Call</h3>
+        <p>We spend 30 minutes mapping your workflow — where time is going, what's repetitive, what has the biggest leverage. No pitch, no pressure.</p>
+      </div>
+
+      <div class="proc-card fade-up">
+        <span class="step-big" aria-hidden="true">02</span>
+        <div class="step-badge" aria-label="Step 2">2</div>
+        <h3>Build &amp; Test</h3>
+        <p>Our team designs and builds your custom automations, testing every edge case before anything goes live. You approve before it touches your business.</p>
+      </div>
+
+      <div class="proc-card fade-up">
+        <span class="step-big" aria-hidden="true">03</span>
+        <div class="step-badge" aria-label="Step 3">3</div>
+        <h3>Launch &amp; Maintain</h3>
+        <p>We deploy and monitor your automations ongoing. If anything breaks or your process changes, we update them. You're never on your own.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     STATS
+============================================================ -->
+<section class="stats" id="results">
+  <div class="container">
+    <div class="stats-grid stagger" id="statsGrid">
+      <div class="stat-item fade-up">
+        <div class="stat-ring-wrap">
+          <svg class="stat-ring-svg" viewBox="0 0 96 96" aria-hidden="true">
+            <circle class="stat-ring-bg" cx="48" cy="48" r="40"/>
+            <circle class="stat-ring-fg teal" cx="48" cy="48" r="40" data-pct="92" id="ring0"/>
+          </svg>
+          <div class="stat-ring-text"><div class="stat-num" data-target="10000" data-suffix="+">0</div></div>
+        </div>
+        <div class="stat-lbl">Hours saved<br/>for clients</div>
+      </div>
+
+      <div class="stat-item fade-up">
+        <div class="stat-ring-wrap">
+          <svg class="stat-ring-svg" viewBox="0 0 96 96" aria-hidden="true">
+            <circle class="stat-ring-bg" cx="48" cy="48" r="40"/>
+            <circle class="stat-ring-fg teal" cx="48" cy="48" r="40" data-pct="87" id="ring1"/>
+          </svg>
+          <div class="stat-ring-text"><div class="stat-num" data-target="87" data-suffix="%">0%</div></div>
+        </div>
+        <div class="stat-lbl">Reduction in<br/>manual work</div>
+      </div>
+
+      <div class="stat-item fade-up">
+        <div class="stat-ring-wrap">
+          <svg class="stat-ring-svg" viewBox="0 0 96 96" aria-hidden="true">
+            <circle class="stat-ring-bg" cx="48" cy="48" r="40"/>
+            <circle class="stat-ring-fg purple" cx="48" cy="48" r="40" data-pct="75" id="ring2"/>
+          </svg>
+          <div class="stat-ring-text"><div class="stat-num purple">3<span style="font-size:1rem;font-weight:500">d</span></div></div>
+        </div>
+        <div class="stat-lbl">Avg. time to<br/>first automation</div>
+      </div>
+
+      <div class="stat-item fade-up">
+        <div class="stat-ring-wrap">
+          <svg class="stat-ring-svg" viewBox="0 0 96 96" aria-hidden="true">
+            <circle class="stat-ring-bg" cx="48" cy="48" r="40"/>
+            <circle class="stat-ring-fg purple" cx="48" cy="48" r="40" data-pct="80" id="ring3"/>
+          </svg>
+          <div class="stat-ring-text"><div class="stat-num purple" data-target="50" data-suffix="+">0</div></div>
+        </div>
+        <div class="stat-lbl">Businesses<br/>automated</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TESTIMONIALS
+============================================================ -->
+<section class="testimonials section" id="testimonials">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="eyebrow">Results</span>
+      <h2>What teams accomplish when<br/>the busywork runs itself.</h2>
+    </div>
+
+    <div class="testi-grid stagger">
+      <div class="testi-card fade-up">
+        <div class="stars" aria-label="5 stars">
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="testi-quote">"We were spending 12 hours a week manually pulling data from three tools into a spreadsheet. Swiftlo automated the whole thing in two days. I genuinely can't believe we waited this long."</p>
+        <div class="testi-author">
+          <div class="avatar" aria-hidden="true">SM</div>
+          <div>
+            <div class="author-name">Sarah M.</div>
+            <div class="author-role">Operations Manager, Logistics SMB</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card fade-up">
+        <div class="stars" aria-label="5 stars">
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="testi-quote">"Our sales follow-up used to depend entirely on whoever remembered to send the email. Now it just happens. Pipeline velocity is up 40% since we turned on the automation."</p>
+        <div class="testi-author">
+          <div class="avatar" aria-hidden="true">JR</div>
+          <div>
+            <div class="author-name">James R.</div>
+            <div class="author-role">Founder, B2B Services Company</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card fade-up">
+        <div class="stars" aria-label="5 stars">
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="testi-quote">"The ROI was immediate. Within the first month we recovered 80 hours across the team. The cost paid for itself in week one. Honestly, I'd do it again on day one."</p>
+        <div class="testi-author">
+          <div class="avatar" aria-hidden="true">PK</div>
+          <div>
+            <div class="author-name">Priya K.</div>
+            <div class="author-role">Director of Growth, E-commerce Brand</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CTA
+============================================================ -->
+<section class="cta-section section" id="cta">
+  <div class="cta-bg" aria-hidden="true"></div>
+  <div class="container">
+    <div class="cta-box fade-up">
+      <span class="eyebrow">Get Started</span>
+      <h2>Your best hours shouldn't go to admin.</h2>
+      <p>Book a free 30-minute strategy call. We'll map your top three automation opportunities and show you exactly how much time your team can reclaim — no pitch, no pressure.</p>
+
+      <form class="cta-form" id="ctaForm" novalidate>
+        <input type="email" class="cta-input" id="ctaEmail" placeholder="Enter your work email" autocomplete="email" aria-label="Work email" required/>
+        <button type="submit" class="btn btn-primary">Book My Free Call</button>
+      </form>
+
+      <div class="cta-success" id="ctaSuccess" aria-live="polite">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        You're in. We'll be in touch within 24 hours.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo" aria-label="Swiftlo">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path d="M16 3A13 13 0 1 1 28.8 21.5" stroke="#7C3AFF" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M19 7L13 17h4L13 25l8-12h-4z" fill="#F2F0FF"/>
+          </svg>
+          <span class="logo-text">Swiftlo</span>
+        </a>
+        <p class="footer-tag">Work smarter. Automate faster.</p>
+        <p class="footer-copy">&copy; 2025 Swiftlo. All rights reserved.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul role="list">
+          <li><a href="#services">Services</a></li>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#results">Results</a></li>
+          <li><a href="#cta">Book a Call</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul role="list">
+          <li><a href="mailto:hello@swiftlo.com">hello@swiftlo.com</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+/* ── Nav scroll ── */
+const navEl = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  navEl.classList.toggle('scrolled', window.scrollY > 70);
+}, { passive: true });
+
+/* ── Hamburger ── */
+const ham = document.getElementById('ham');
+const mobileNav = document.getElementById('mobile-nav');
+ham.addEventListener('click', () => {
+  const open = mobileNav.classList.toggle('open');
+  ham.classList.toggle('open', open);
+  ham.setAttribute('aria-expanded', open);
+});
+mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  mobileNav.classList.remove('open');
+  ham.classList.remove('open');
+  ham.setAttribute('aria-expanded', false);
+}));
+
+/* ── Smooth scroll ── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const id = a.getAttribute('href');
+    if (id === '#') return;
+    const target = document.querySelector(id);
+    if (target) {
+      e.preventDefault();
+      window.scrollTo({ top: target.getBoundingClientRect().top + scrollY - navEl.offsetHeight - 20, behavior: 'smooth' });
+    }
+  });
+});
+
+/* ── Fade-up observer ── */
+const fadeObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); fadeObs.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => fadeObs.observe(el));
+
+/* ── Count-up ── */
+function countUp(el) {
+  const target = parseInt(el.dataset.target, 10);
+  if (isNaN(target)) return;
+  const suffix = el.dataset.suffix || '';
+  const dur = 1800;
+  const t0 = performance.now();
+  const tick = now => {
+    const p = Math.min((now - t0) / dur, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.floor(ease * target).toLocaleString() + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+/* ── Stat rings ── */
+const CIRC = 2 * Math.PI * 40; // r=40
+function animateRings() {
+  document.querySelectorAll('.stat-ring-fg').forEach(ring => {
+    const pct = parseFloat(ring.dataset.pct) / 100;
+    ring.style.strokeDashoffset = CIRC * (1 - pct);
+  });
+  document.querySelectorAll('[data-target]').forEach(countUp);
+}
+
+const statsObs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) { animateRings(); statsObs.disconnect(); }
+}, { threshold: 0.3 });
+const statsEl = document.querySelector('.stats');
+if (statsEl) statsObs.observe(statsEl);
+
+/* ── Marquee ── */
+const tools = ['HubSpot','Notion','Gmail','Slack','Airtable','Google Sheets','Stripe','Typeform','Salesforce','Make','Zapier','Pipedrive','ClickUp','Intercom','Xero'];
+const track = document.getElementById('marqueeTrack');
+if (track) {
+  const set = tools.map(t => `<span class="marquee-item"><span class="marquee-dot"></span>${t}</span>`).join('');
+  track.innerHTML = set + set; // duplicate for seamless loop
+}
+
+
+/* ── Scroll progress bar ── */
+const scrollBar = document.getElementById('scrollBar');
+window.addEventListener('scroll', () => {
+  const total = document.body.scrollHeight - window.innerHeight;
+  if (total > 0) scrollBar.style.width = Math.min(window.scrollY / total * 100, 100) + '%';
+}, { passive: true });
+
+/* ── Floating particles ── */
+(function() {
+  const colors = ['rgba(124,58,255,', 'rgba(45,255,208,', 'rgba(157,107,255,'];
+  for (let i = 0; i < 22; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 2.5 + 1;
+    const dur  = Math.random() * 14 + 8;
+    const delay = -(Math.random() * 20);
+    const drift = (Math.random() - 0.5) * 80;
+    const op  = (Math.random() * 0.2 + 0.08).toFixed(2);
+    const col = colors[Math.floor(Math.random() * colors.length)];
+    p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;bottom:${Math.random()*30}%;--dur:${dur}s;--drift:${drift}px;--op:${op};background:${col}1);animation-delay:${delay}s`;
+    document.body.appendChild(p);
+  }
+})();
+
+/* ── 3D card tilt ── */
+document.querySelectorAll('.svc-card, .testi-card, .prob-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width  - 0.5;
+    const y = (e.clientY - r.top)  / r.height - 0.5;
+    card.style.transition = 'transform 0.06s ease, box-shadow .25s ease, border-color .25s ease';
+    card.style.transform = `perspective(700px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) translateY(-5px)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transition = '';
+    card.style.transform  = '';
+  });
+});
+
+/* ── Hero visual mouse parallax ── */
+const heroVisualEl = document.querySelector('.hero-visual');
+if (heroVisualEl && window.innerWidth > 900) {
+  document.addEventListener('mousemove', e => {
+    const cx = window.innerWidth  / 2;
+    const cy = window.innerHeight / 2;
+    const dx = (e.clientX - cx) / cx;
+    const dy = (e.clientY - cy) / cy;
+    heroVisualEl.style.transform = `translate(${dx * 10}px, ${dy * 7}px)`;
+  }, { passive: true });
+}
+
+/* ── CTA Form ── */
+document.getElementById('ctaForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const inp = document.getElementById('ctaEmail');
+    inp.style.borderColor = '#ff4444';
+    inp.style.boxShadow   = '0 0 0 3px rgba(255,68,68,.15)';
+    setTimeout(() => { inp.style.borderColor = ''; inp.style.boxShadow = ''; }, 2000);
+    return;
+  }
+  document.getElementById('ctaForm').style.display    = 'none';
+  document.getElementById('ctaSuccess').style.display = 'flex';
+});
+</script>
+</body>
+</html>
