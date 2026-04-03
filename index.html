@@ -636,7 +636,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:64
       </ul>
 
       <div class="nav-right">
-        <a href="#cta" class="btn btn-primary btn-sm">Book a Free Call</a>
+        <a href="https://calendly.com/app/scheduling/meeting_types/user/me" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Book a Free Call</a>
         <button class="ham" id="ham" aria-label="Toggle menu" aria-expanded="false">
           <span></span><span></span><span></span>
         </button>
@@ -648,7 +648,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:64
       <a href="#how-it-works">How It Works</a>
       <a href="#results">Results</a>
       <a href="#testimonials">Testimonials</a>
-      <a href="#cta" class="btn btn-primary">Book a Free Call</a>
+      <a href="https://calendly.com/app/scheduling/meeting_types/user/me" target="_blank" rel="noopener" class="btn btn-primary">Book a Free Call</a>
     </nav>
   </div>
 </nav>
@@ -680,7 +680,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:64
             See How It Works
             <svg class="btn-icon" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 9h12M11 5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
-          <a href="#cta" class="btn btn-ghost">Book a Free Call</a>
+          <a href="https://calendly.com/app/scheduling/meeting_types/user/me" target="_blank" rel="noopener" class="btn btn-ghost">Book a Free Call</a>
         </div>
 
         <div class="hero-proof fade-up">
@@ -1114,14 +1114,12 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:64
       <h2>Your best hours shouldn't go to admin.</h2>
       <p>Book a free 30-minute strategy call. We'll map your top three automation opportunities and show you exactly how much time your team can reclaim — no pitch, no pressure.</p>
 
-      <form class="cta-form" id="ctaForm" novalidate>
-        <input type="email" class="cta-input" id="ctaEmail" placeholder="Enter your work email" autocomplete="email" aria-label="Work email" required/>
-        <button type="submit" class="btn btn-primary">Book My Free Call</button>
-      </form>
-
-      <div class="cta-success" id="ctaSuccess" aria-live="polite">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        You're in. We'll be in touch within 24 hours.
+      <div style="display:flex;flex-direction:column;align-items:center;gap:16px;position:relative;z-index:1;">
+        <a href="https://calendly.com/app/scheduling/meeting_types/user/me" target="_blank" rel="noopener" class="btn btn-primary" style="font-size:1.0625rem;height:58px;padding:0 36px;">
+          Book My Free Call
+          <svg class="btn-icon" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 9h12M11 5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <p style="font-size:.875rem;color:var(--text-3);">Or email us at <a href="mailto:ymo441993@gmail.com" style="color:var(--accent-2);text-decoration:underline;text-underline-offset:3px;">ymo441993@gmail.com</a></p>
       </div>
     </div>
   </div>
@@ -1142,7 +1140,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:64
           <span class="logo-text">Swiftlo</span>
         </a>
         <p class="footer-tag">Work smarter. Automate faster.</p>
-        <p class="footer-copy">&copy; 2025 Swiftlo. All rights reserved.</p>
+        <p class="footer-copy">&copy; 2026 Swiftlo. All rights reserved.</p>
       </div>
 
       <div class="footer-col">
@@ -1158,7 +1156,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:64
       <div class="footer-col">
         <h4>Contact</h4>
         <ul role="list">
-          <li><a href="mailto:hello@swiftlo.com">hello@swiftlo.com</a></li>
+          <li><a href="mailto:ymo441993@gmail.com">ymo441993@gmail.com</a></li>
           <li><a href="#">Privacy Policy</a></li>
           <li><a href="#">Terms of Service</a></li>
         </ul>
@@ -1302,20 +1300,6 @@ if (heroVisualEl && window.innerWidth > 900) {
   }, { passive: true });
 }
 
-/* ── CTA Form ── */
-document.getElementById('ctaForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const email = document.getElementById('ctaEmail').value.trim();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    const inp = document.getElementById('ctaEmail');
-    inp.style.borderColor = '#ff4444';
-    inp.style.boxShadow   = '0 0 0 3px rgba(255,68,68,.15)';
-    setTimeout(() => { inp.style.borderColor = ''; inp.style.boxShadow = ''; }, 2000);
-    return;
-  }
-  document.getElementById('ctaForm').style.display    = 'none';
-  document.getElementById('ctaSuccess').style.display = 'flex';
-});
 </script>
 </body>
 </html>
